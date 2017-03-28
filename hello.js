@@ -42,11 +42,11 @@ $(function() {
   $("#sendbtn").click(sendMsg);
 });
 
-var sendMsg = function(type) {
+var sendMsg = function(evnet, msgType) {
   var content;
   // 向这个房间发送消息，这段代码是兼容多终端格式的，包括 iOS、Android、Window Phone
   var messageSender;
-  if(!type) {
+  if(!msgType) {
     content = $("#input-send").val();
     // 不让发送空字符
     if (!String(content).replace(/^\s+/, '').replace(/\s+$/, '')) {
@@ -55,25 +55,25 @@ var sendMsg = function(type) {
     // 发送文字的场合
     messageSender = new AV.TextMessage(content);
     messageSender.setAttributes({
-      type: "txtMsg",
+      msgType: "txtMsg",
     });
   } else {
     // 发送微信语音的场合
     messageSender = new AV.TextMessage(voice.serverId);
     messageSender.setAttributes({
-      type: "wxVoice",
+      msgType: "wxVoice",
       serverId: voice.serverId
     });
   }
   $("#input-send").val("");
   room.send(messageSender).then(function(message) {
     // 发送成功之后的回调
-    var remoteType = message.getAttributes().type;
+    var remoteType = message.getAttributes().msgType;
     var remoteServerId = message.getAttributes().serverId;
     if(remoteType == "txtMsg") {
       showLog('（' + formatTime(message.timestamp) + '）  自己： ', encodeHTML(message.text));
     } else {
-      showLog('（' + formatTime(message.timestamp) + '）  自己： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>&nbps;<button>');
+      showLog('（' + formatTime(message.timestamp) + '）  自己： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>播放<button>');
     }
     printWall.scrollTop = printWall.scrollHeight;
   });
@@ -164,16 +164,16 @@ function showMsg(message, isBefore) {
     from = '自己';
   }
 
-  var remoteType = message.getAttributes().type;
-  var remoteServerId = message.getAttributes().serverId;
+  var remoteType = !message.getAttributes() ? "" : message.getAttributes().msgType;
+  var remoteServerId = !message.getAttributes() ? "" : message.getAttributes().serverId;
 
   if (message instanceof AV.TextMessage) {
-    if(remoteType == "txtMsg") {
+    if(!remoteType || remoteType == "txtMsg") {
       if (String(text).replace(/^\s+/, '').replace(/\s+$/, '')) {
         showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', encodeHTML(message.text), isBefore);
       }
     } else {
-      showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>&nbps;<button>');
+      showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>播放<button>');
     }
   } else if (message instanceof AV.FileMessage) {
     showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', createLink(message.getFile().url()), isBefore);
@@ -258,7 +258,7 @@ wx.ready(function() {
       }
     });
   });
-  $('#stop-talk').click(function() {
+  $('#stop-talk').click(function(event) {
     wx.stopRecord({
       success: function(res) {
         voice.localId = res.localId;
@@ -270,7 +270,7 @@ wx.ready(function() {
             voice.serverId = res.serverId;
 
             //调用leancloud的API上传微信的serverId。
-            sendMsg(1);
+            sendMsg(event, 1);
           }
         });
       },
