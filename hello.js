@@ -173,7 +173,7 @@ function showMsg(message, isBefore) {
         showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', encodeHTML(message.text), isBefore);
       }
     } else {
-      showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>播放<button>');
+      showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>播放<button>', isBefore);
     }
   } else if (message instanceof AV.FileMessage) {
     showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', createLink(message.getFile().url()), isBefore);
