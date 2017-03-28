@@ -40,13 +40,10 @@ var msgTime;
 $(function() {
   $("#openbtn").click(main);
   $("#sendbtn").click(sendMsg);
-  $("#print-wall").on("click", "button", function(event) {
-    alert(this.id);
-  });
 });
 
 var sendMsg = function(type) {
-  var content
+  var content;
   // 向这个房间发送消息，这段代码是兼容多终端格式的，包括 iOS、Android、Window Phone
   var messageSender;
   if(!type) {
@@ -57,7 +54,7 @@ var sendMsg = function(type) {
     }
     // 发送文字的场合
     messageSender = new AV.TextMessage(content);
-    messageSender.setAttribute({
+    messageSender.setAttributes({
       type: "txtMsg",
     });
   } else {
@@ -166,9 +163,17 @@ function showMsg(message, isBefore) {
   if (message.from === clientId) {
     from = '自己';
   }
+
+  var remoteType = message.getAttributes().type;
+  var remoteServerId = message.getAttributes().serverId;
+
   if (message instanceof AV.TextMessage) {
-    if (String(text).replace(/^\s+/, '').replace(/\s+$/, '')) {
-      showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', encodeHTML(message.text), isBefore);
+    if(remoteType == "txtMsg") {
+      if (String(text).replace(/^\s+/, '').replace(/\s+$/, '')) {
+        showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', encodeHTML(message.text), isBefore);
+      }
+    } else {
+      showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', '<button id=\'' + remoteServerId + '\' class=\'btn playbtn\'>&nbps;<button>');
     }
   } else if (message instanceof AV.FileMessage) {
     showLog('（' + formatTime(message.timestamp) + '）  ' + encodeHTML(from) + '： ', createLink(message.getFile().url()), isBefore);
@@ -265,7 +270,7 @@ wx.ready(function() {
             voice.serverId = res.serverId;
 
             //调用leancloud的API上传微信的serverId。
-            
+            sendMsg(1);
           }
         });
       },
@@ -281,6 +286,19 @@ wx.ready(function() {
     }
     wx.playVoice({
       localId: voice.localId
+    });
+  });
+  $("#print-wall").on("click", "button", function(event) {
+    alert(this.id);
+    var localServerId = this.id;
+    wx.downloadVoice({
+      serverId: localServerId,
+      success: function (res) {
+        alert('下载语音成功，localId 为' + res.localId);
+        wx.playVoice({
+          localId: res.localId
+        });
+      }
     });
   });
 });
