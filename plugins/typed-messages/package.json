@@ -1,0 +1,29 @@
+{
+  "name": "leancloud-realtime-plugin-typed-messages",
+  "version": "1.0.0",
+  "description": "TypedMessages for LeanCloud Realtime",
+  "main": "dist/typed-messages.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: tests included in package leancloud-realtime\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leancloud/js-realtime-sdk.git"
+  },
+  "keywords": [
+    "leancloud",
+    "realtime"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leancloud/js-realtime-sdk/issues"
+  },
+  "homepage": "https://github.com/leancloud/js-realtime-sdk#readme",
+  "peerDependencies": {
+    "leancloud-storage": "^1.0.0",
+    "leancloud-realtime": "^3.1.0"
+  }
+}
