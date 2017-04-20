@@ -1,9 +1,9 @@
 wx.config({
 	debug: true,
-	appId: "wx34abe5391c3fe026",
-	timestamp: 1490695179,
-	nonceStr: "d93533ba-0fd5-430d-8018-8f3869608df8",
-	signature: "0439ba5bc05a7fe97aa78a48a07478dfa490bef4",
+	appId: "wxd54a6736a790a0f8",
+	timestamp: 1492675066,
+	nonceStr: "c5432de8-fa95-4f83-8070-10d32629f560",
+	signature: "63110a7c769d490e5e06b715e9c69e828dcb0ae9",
 	jsApiList:[
 	  "startRecord",
 	  "stopRecord",
